@@ -1,4 +1,5 @@
 import React from 'react';
+import { Demo } from './demo';
 
 export const Home = () => {
   return (
@@ -8,6 +9,7 @@ export const Home = () => {
         margin: 'auto',
       }}
     >
+      <Demo size={800} resolution={1600} />
     </div>
   );
 };

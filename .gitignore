@@ -11,3 +11,7 @@ __pycache__
 dist/*
 !dist/index.html
 !dist/favicon.svg
+!dist/otto.*.bin
+
+*.blend*
+*.log

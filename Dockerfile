@@ -3,7 +3,7 @@ WORKDIR /app/
 COPY package.json package-lock.json /app/
 RUN npm install
 COPY tsconfig.json webpack.config.js /app/
-COPY dist/index.html dist/favicon.svg /app/dist/
+COPY dist/index.html dist/favicon.svg dist/otto.*.bin /app/dist/
 COPY src /app/src
 RUN npx webpack
 
