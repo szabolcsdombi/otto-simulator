@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { useRef } from 'react';
 
+const vec = (x, y, z) => ({ x, y, z });
 const sub = (a, b) => ({ x: a.x - b.x, y: a.y - b.y, z: a.z - b.z });
 const cross = (a, b) => ({ x: a.y * b.z - a.z * b.y, y: a.z * b.x - a.x * b.z, z: a.x * b.y - a.y * b.x });
 const dot = (a, b) => a.x * b.x + a.y * b.y + a.z * b.z;
@@ -9,10 +10,9 @@ const normalize = (a) => {
   return { x: a.x / l, y: a.y / l, z: a.z / l };
 };
 
-const camera = (eye, target) => {
+const camera = (eye, target, aspect) => {
   const up = { x: 0.0, y: 0.0, z: 1.0 };
   const fov = 60.0;
-  const aspect = 1.0;
   const znear = 0.1;
   const zfar = 1000.0;
 
@@ -21,8 +21,9 @@ const camera = (eye, target) => {
   const u = cross(s, f);
   const t = { x: -dot(s, eye), y: -dot(u, eye), z: -dot(f, eye) };
 
-  const r1 = Math.tan(fov * 0.008726646259971647884618453842);
-  const r2 = r1 * aspect;
+  const r0 = Math.tan(fov * 0.008726646259971647884618453842);
+  const r1 = r0 * Math.max(1.0 / aspect, 1.0);
+  const r2 = r0 * Math.max(aspect, 1.0);
   const r3 = (zfar + znear) / (zfar - znear);
   const r4 = (2.0 * zfar * znear) / (zfar - znear);
 
@@ -86,7 +87,8 @@ const fragmentShaderCode = `
   }
 `;
 
-export const Demo = ({ size, resolution }) => {
+export const Demo = () => {
+  const resolution = 1200;
   const ref = useRef(null);
 
   useEffect(() => {
@@ -154,6 +156,9 @@ export const Demo = ({ size, resolution }) => {
       let boneIndex = 0;
 
       const render = () => {
+        const { clientWidth, clientHeight } = ref.current;
+        const aspect = clientWidth / clientHeight;
+
         const bones = resources.frames.subarray(boneIndex * 35, boneIndex * 35 + 35);
         boneIndex = (boneIndex + 1) % Math.floor(resources.frames.length / 35);
 
@@ -162,7 +167,7 @@ export const Demo = ({ size, resolution }) => {
 
         gl.useProgram(prog);
         gl.bindVertexArray(vao);
-        gl.uniformMatrix4fv(mvpUniform, false, camera({ x: 0.0, y: -0.3, z: 0.15 }, { x: 0.0, y: 0.0, z: 0.07 }));
+        gl.uniformMatrix4fv(mvpUniform, false, camera(vec(0.0, -0.3, 0.15), vec(0.0, 0.0, 0.07), aspect));
 
         gl.uniform1i(flipUniform, 1);
 
@@ -207,8 +212,8 @@ export const Demo = ({ size, resolution }) => {
       width={resolution}
       height={resolution}
       style={{
-        width: size,
-        height: size,
+        width: '100vw',
+        height: '100vh',
       }}
     />
   )

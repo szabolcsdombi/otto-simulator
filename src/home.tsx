@@ -5,11 +5,23 @@ export const Home = () => {
   return (
     <div
       style={{
-        width: 'min(800px, 100%)',
-        margin: 'auto',
+        width: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        overflow: 'hidden',
       }}
     >
-      <Demo size={800} resolution={1600} />
+      <Demo />
+      <div
+        style={{
+          width: 'min(800px, 100%)',
+          margin: 'auto',
+        }}
+      >
+        <h1>Otto Simulator</h1>
+        <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quam quasi sunt ex incidunt unde necessitatibus fugiat ipsum dicta dolorem nihil. Ipsum dicta itaque dignissimos. Dicta ea quod asperiores voluptatibus laborum?</p>
+      </div>
     </div>
   );
 };
