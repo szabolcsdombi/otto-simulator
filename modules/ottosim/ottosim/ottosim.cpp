@@ -89,8 +89,8 @@ void OttoEnv_init(OttoEnv * self, unsigned long long seed) {
     self->world->getSolverInfo().m_solverMode |= SOLVER_RANDMIZE_ORDER;
     self->world->setGravity({self->noise->get() * 0.01, self->noise->get() * 0.01, -9.8});
 
-    self->ground = new btRigidBody(0.0, NULL, box(100.0, 100.0, 100.0), {0.0, 0.0, 0.0});
-    self->ground->setWorldTransform(btTransform({0.0, 0.0, 0.0, 1.0}, {0.0, 0.0, -50.0}));
+    self->ground = new btRigidBody(0.0, NULL, box(2.0, 0.615, 1.0), {0.0, 0.0, 0.0});
+    self->ground->setWorldTransform(btTransform({0.0, 0.0, 0.0, 1.0}, {0.0, 0.0, -0.5}));
 
     self->world->addRigidBody(self->ground, 1, 2);
 
