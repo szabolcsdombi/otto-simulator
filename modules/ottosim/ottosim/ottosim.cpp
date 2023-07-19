@@ -182,15 +182,15 @@ void OttoEnv_init(OttoEnv * self, unsigned long long seed) {
     self->leg_R_motor->finalizeMultiDof();
     self->foot_R_motor->finalizeMultiDof();
 
-    self->ground->setFriction(0.75);
+    self->ground->setFriction(0.6);
     self->ground->setRollingFriction(0.01);
     self->ground->setSpinningFriction(0.01);
 
-    self->foot_L->setFriction(0.75);
+    self->foot_L->setFriction(0.6);
     self->foot_L->setRollingFriction(0.01);
     self->foot_L->setSpinningFriction(0.01);
 
-    self->foot_R->setFriction(0.75);
+    self->foot_R->setFriction(0.6);
     self->foot_R->setRollingFriction(0.01);
     self->foot_R->setSpinningFriction(0.01);
 
