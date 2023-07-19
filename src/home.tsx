@@ -25,14 +25,12 @@ export const Home = () => {
           This project brings <a href="https://www.ottodiy.com/">Otto</a> to your browser.
           Even better, it allows you to simulate Otto within Python.
           The simulation implements the Gym Interface.
-          (DRAFT)
         </p>
-        <h4>Work-in-Progress</h4>
         <h2>Run the Simulation</h2>
         <p>
           The animation above is a direct result of the simulation.<br />
           To run a specific agent live in the browser open the <Link to="/otto-simulator/editor/">Editor</Link>.<br />
-          To control Otto with a gamepad visit the <Link to="/otto-simulator/play/">Play</Link> section.
+          To control Otto with a keyboard or gamepad visit the <Link to="/otto-simulator/play/">Play</Link> section.
         </p>
         <h2>Open Source</h2>
         <p>
