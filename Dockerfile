@@ -17,6 +17,9 @@ RUN pyodide build /zengl -o /web/
 COPY modules/canvas /canvas
 RUN pyodide build /canvas -o /web/
 
+COPY modules/ottosim /ottosim
+RUN pyodide build /ottosim -o /web/ --exports pyinit
+
 FROM node:20 AS build
 WORKDIR /app/
 COPY package.json package-lock.json /app/

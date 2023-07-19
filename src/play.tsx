@@ -13,6 +13,7 @@ export const Play = () => {
       await pyodide.loadPackage([
         '/otto-simulator/zengl-1.13.0-cp311-cp311-emscripten_3_1_32_wasm32.whl',
         '/otto-simulator/canvas-0.1.0-cp311-cp311-emscripten_3_1_32_wasm32.whl',
+        '/otto-simulator/ottosim-0.1.0-cp311-cp311-emscripten_3_1_32_wasm32.whl',
       ]);
 
       const gl = ref.current.getContext('webgl2', {

@@ -3,10 +3,9 @@ from itertools import cycle
 import motion
 import ottosim
 import zengl
-from render import Renderer
 from window import window
 
-renderer = Renderer(zengl.context(), window.size)
+renderer = ottosim.Renderer(zengl.context(), window.size)
 animations = cycle([
     motion.balance,
     motion.walk,
@@ -18,7 +17,7 @@ animations = cycle([
 
 
 class g:
-    env = ottosim.make()
+    env = ottosim.make('Otto-v0')
     animation = None
     t = None
 

@@ -1,4 +1,8 @@
+import os
+
 import zengl
+
+meshfile = os.path.normpath(os.path.join(__file__, '../assets/otto.mesh.bin'))
 
 
 def make_pipeline(ctx, framebuffer, uniform_buffer, vertex_buffer, bones, bone, first_vertex, vertex_count):
@@ -81,13 +85,14 @@ class Renderer:
     def __init__(self, ctx: zengl.Context, size):
         self.ctx = ctx
         self.aspect = size[0] / size[1]
+        self.resolved = ctx.image(size, 'rgba8unorm', texture=False)
         self.image = ctx.image(size, 'rgba8unorm', samples=16)
         self.depth = ctx.image(size, 'depth24plus', samples=16)
         self.image.clear_value = (0.0, 0.0, 0.0, 1.0)
         framebuffer = [self.image, self.depth]
 
         self.uniform_buffer = ctx.buffer(size=80)
-        self.vertex_buffer = ctx.buffer(open('dist/otto.mesh.bin', 'rb').read())
+        self.vertex_buffer = ctx.buffer(open(meshfile, 'rb').read())
         self.bones = memoryview(bytearray(168))
         self.shapes = [
             make_pipeline(self.ctx, framebuffer, self.uniform_buffer, self.vertex_buffer, self.bones, 0, 0, 774),
@@ -98,18 +103,15 @@ class Renderer:
             make_pipeline(self.ctx, framebuffer, self.uniform_buffer, self.vertex_buffer, self.bones, 5, 1806, 1248),
         ]
 
-    def init(self, eye, target):
+    def render(self, env, eye, target):
         self.ctx.new_frame()
         camera = zengl.camera(eye, target, aspect=self.aspect, fov=45.0)
         self.uniform_buffer.write(camera)
         self.image.clear()
         self.depth.clear()
-
-    def render(self, env):
         self.bones[:140] = env.bones()
         for shape in self.shapes:
             shape.render()
-
-    def flush(self):
-        self.image.blit()
+        self.image.blit(self.resolved)
+        self.resolved.blit()
         self.ctx.end_frame()

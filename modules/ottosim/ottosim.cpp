@@ -207,7 +207,7 @@ void OttoEnv_release(OttoEnv * self) {
     self->ready = false;
 }
 
-static OttoEnv * meth_make(PyObject * self, PyObject * args) {
+static OttoEnv * meth_make(PyObject * self, PyObject * args, PyObject * kwargs) {
     OttoEnv * res = PyObject_New(OttoEnv, OttoEnv_type);
     res->ready = false;
     return res;
@@ -332,14 +332,14 @@ static PyMemberDef OttoEnv_members[] = {
 static PyType_Slot OttoEnv_slots[] = {
     {Py_tp_methods, OttoEnv_methods},
     {Py_tp_members, OttoEnv_members},
-    {Py_tp_dealloc, OttoEnv_dealloc},
+    {Py_tp_dealloc, (void *)OttoEnv_dealloc},
     {},
 };
 
 static PyType_Spec OttoEnv_spec = {"OttoEnv", sizeof(OttoEnv), 0, Py_TPFLAGS_DEFAULT, OttoEnv_slots};
 
 static PyMethodDef module_methods[] = {
-    {"make", (PyCFunction)meth_make, METH_NOARGS},
+    {"make", (PyCFunction)meth_make, METH_VARARGS | METH_KEYWORDS},
     {},
 };
 

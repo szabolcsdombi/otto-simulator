@@ -1,7 +1,7 @@
 from setuptools import Extension, setup
 
 ext = Extension(
-    name='ottosim',
+    name='ottosim.ottosim',
     sources=[
         'ottosim.cpp',
         'bullet/btBulletAll.cpp',
@@ -16,5 +16,12 @@ ext = Extension(
 setup(
     name='ottosim',
     version='0.1.0',
+    packages=['ottosim'],
+    package_data={
+        'ottosim': [
+            'assets/otto.mesh.bin',
+        ],
+    },
+    include_package_data=True,
     ext_modules=[ext],
 )
