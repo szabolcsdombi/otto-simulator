@@ -1,6 +1,16 @@
 #include <Python.h>
 #include <structmember.h>
 
+typedef struct Keyboard {
+    int num_1;
+    int num_2;
+    int num_3;
+    int num_4;
+    int num_5;
+    int num_6;
+    int reset;
+} Keyboard;
+
 typedef struct Gamepad {
     float lx, ly;
     float rx, ry;
@@ -21,6 +31,7 @@ typedef unsigned char GLubyte;
 typedef char GLchar;
 typedef void * GLsync;
 
+extern void canvas_get_keyboard(void * keyboard);
 extern void canvas_get_gamepad(void * gamepad);
 extern void canvas_get_size(int * size);
 extern float canvas_get_aspect();
@@ -636,8 +647,23 @@ static PyObject * load_opengl_function(PyObject * self, PyObject * arg) {
     return res;
 }
 
+static PyObject * Canvas_meth_keyboard(Canvas * self, PyObject * args) {
+    Keyboard keyboard;
+    canvas_get_keyboard(&keyboard);
+    return Py_BuildValue(
+        "{sOsOsOsOsOsOsO}",
+        "1", keyboard.num_1 ? Py_True : Py_False,
+        "2", keyboard.num_2 ? Py_True : Py_False,
+        "3", keyboard.num_3 ? Py_True : Py_False,
+        "4", keyboard.num_4 ? Py_True : Py_False,
+        "5", keyboard.num_5 ? Py_True : Py_False,
+        "6", keyboard.num_6 ? Py_True : Py_False,
+        "reset", keyboard.reset ? Py_True : Py_False
+    );
+}
+
 static PyObject * Canvas_meth_gamepad(Canvas * self, PyObject * args) {
-    Gamepad gamepad = {};
+    Gamepad gamepad;
     canvas_get_gamepad(&gamepad);
     return Py_BuildValue("{s(ff)s(ff)sO}", "left", gamepad.lx, gamepad.ly, "right", gamepad.rx, gamepad.ry, "reset", gamepad.reset ? Py_True : Py_False);
 }
@@ -668,6 +694,7 @@ static PyType_Slot Loader_slots[] = {
 };
 
 static PyMethodDef Canvas_methods[] = {
+    {"keyboard", (PyCFunction)Canvas_meth_keyboard, METH_NOARGS},
     {"gamepad", (PyCFunction)Canvas_meth_gamepad, METH_NOARGS},
     {NULL},
 };

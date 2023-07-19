@@ -7,7 +7,10 @@ export const Play = () => {
   const ref = useRef(null);
 
   useEffect(() => {
-    (async () => {
+    let anim = null;
+    let uninstallEventHandlers = null;
+
+    const init = async () => {
       const pyodide = await loadPyodide({ indexURL: '/otto-simulator/' });
 
       await pyodide.loadPackage([
@@ -22,30 +25,44 @@ export const Play = () => {
         powerPreference: 'high-performance',
       });
 
-      setupCanvas(pyodide, ref.current, gl);
+      uninstallEventHandlers = setupCanvas(pyodide, ref.current, gl);
 
       pyodide.runPython(pythonCode);
       const updateCallback = pyodide.globals.get('update');
 
       const render = () => {
-        // const { clientWidth, clientHeight } = ref.current;
         updateCallback();
-        requestAnimationFrame(render);
+        anim = requestAnimationFrame(render);
       };
 
-      requestAnimationFrame(render);
-    })();
+      anim = requestAnimationFrame(render);
+    };
+
+    init();
+
+    return () => {
+      cancelAnimationFrame(anim);
+      uninstallEventHandlers?.();
+    }
   }, []);
 
   return (
-    <canvas
-      ref={ref}
-      width={1280}
-      height={720}
+    <div
       style={{
-        width: 1280,
-        height: 720,
+        width: '100vw',
+        height: '100vh',
+        overflow: 'hidden',
       }}
-    />
+    >
+      <canvas
+        ref={ref}
+        width={1280}
+        height={720}
+        style={{
+          width: '100vw',
+          height: '100vh',
+        }}
+      />
+    </div>
   );
 };

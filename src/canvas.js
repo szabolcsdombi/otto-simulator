@@ -3,6 +3,19 @@ export const setupCanvas = (pyodide, canvas, gl) => {
   const textEncoder = new TextEncoder('utf-8');
   const textDecoder = new TextDecoder('utf-8');
 
+  const keys = new Set();
+
+  const keydown = (evt) => {
+    keys.add(evt.code);
+  };
+
+  const keyup = (evt) => {
+    keys.delete(evt.code);
+  };
+
+  document.addEventListener('keydown', keydown);
+  document.addEventListener('keyup', keyup);
+
   const getString = (ptr) => {
     const length = wasm.HEAPU8.subarray(ptr).findIndex((c) => c === 0);
     return textDecoder.decode(wasm.HEAPU8.subarray(ptr, ptr + length));
@@ -53,6 +66,7 @@ export const setupCanvas = (pyodide, canvas, gl) => {
       wasm.HEAPF32[raw / 4 + 1] = 0.0;
       wasm.HEAPF32[raw / 4 + 2] = 0.0;
       wasm.HEAPF32[raw / 4 + 3] = 0.0;
+      wasm.HEAP32[raw / 4 + 4] = 0;
       for (const gamepad of gamepads) {
         if (gamepad) {
           wasm.HEAPF32[raw / 4] = gamepad.axes[0];
@@ -63,6 +77,15 @@ export const setupCanvas = (pyodide, canvas, gl) => {
           break;
         }
       }
+    },
+    canvas_get_keyboard(raw) {
+      wasm.HEAP32[raw / 4] = keys.has('Digit1') || keys.has('Numpad1');
+      wasm.HEAP32[raw / 4 + 1] = keys.has('Digit2') || keys.has('Numpad2');
+      wasm.HEAP32[raw / 4 + 2] = keys.has('Digit3') || keys.has('Numpad3');
+      wasm.HEAP32[raw / 4 + 3] = keys.has('Digit4') || keys.has('Numpad4');
+      wasm.HEAP32[raw / 4 + 4] = keys.has('Digit5') || keys.has('Numpad5');
+      wasm.HEAP32[raw / 4 + 5] = keys.has('Digit6') || keys.has('Numpad6');
+      wasm.HEAP32[raw / 4 + 6] = keys.has('Space') || keys.has('Numpad0');
     },
     canvas_get_size(size) {
       wasm.HEAP32[size / 4] = canvas.width;
@@ -481,4 +504,8 @@ export const setupCanvas = (pyodide, canvas, gl) => {
       gl.vertexAttribDivisor(index, divisor);
     },
   });
+  return () => {
+    document.removeEventListener('keydown', keydown);
+    document.removeEventListener('keyup', keyup);
+  };
 };
