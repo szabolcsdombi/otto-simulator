@@ -19,7 +19,7 @@ subject to the following restrictions:
 #include "LinearMath/btVector3.h"
 #include "LinearMath/btTransform.h"
 #include "btManifoldPoint.h"
-class btCollisionObject;
+#include "BulletCollision/CollisionDispatch/btCollisionObject.h"
 #include "LinearMath/btAlignedAllocator.h"
 
 struct btCollisionResult;
@@ -266,11 +266,10 @@ public:
 	void deSerialize(const struct btPersistentManifoldFloatData* manifoldDataPtr);
 };
 
-template <typename T>
-inline int getIslandId(const T* manifold)
+inline int getIslandId(const btPersistentManifold* lhs)
 {
-	const btCollisionObject* rcolObj0 = static_cast<const btCollisionObject*>(manifold->getBody0());
-	const btCollisionObject* rcolObj1 = static_cast<const btCollisionObject*>(manifold->getBody1());
+	const btCollisionObject* rcolObj0 = static_cast<const btCollisionObject*>(lhs->getBody0());
+	const btCollisionObject* rcolObj1 = static_cast<const btCollisionObject*>(lhs->getBody1());
 	int islandId = rcolObj0->getIslandTag() >= 0 ? rcolObj0->getIslandTag() : rcolObj1->getIslandTag();
 	return islandId;
 }
