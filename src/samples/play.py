@@ -62,7 +62,8 @@ def update():
     reset = gamepad['reset'] or keyboard['reset']
     if reset and not g.prev_reset:
         env.reset()
-        g.time = 0.0
+        g.t = 0.0
+        g.blending = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
         g.prev_action = [0.0, 0.0, 0.0, 0.0]
     g.prev_reset = reset
 
