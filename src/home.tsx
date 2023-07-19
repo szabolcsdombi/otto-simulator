@@ -1,5 +1,6 @@
 import React from 'react';
 import { Demo } from './demo';
+import { Link } from 'react-router-dom';
 
 export const Home = () => {
   return (
@@ -30,8 +31,8 @@ export const Home = () => {
         <h2>Run the Simulation</h2>
         <p>
           The animation above is a direct result of the simulation.<br />
-          To run a specific agent live in the browser open the <a href="#editor">Editor</a>.<br />
-          To control Otto with a gamepad visit the <a href="#play">Play</a> section.
+          To run a specific agent live in the browser open the <Link to="/otto-simulator/editor/">Editor</Link>.<br />
+          To control Otto with a gamepad visit the <Link to="/otto-simulator/play/">Play</Link> section.
         </p>
         <h2>Open Source</h2>
         <p>
