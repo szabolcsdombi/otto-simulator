@@ -3,7 +3,7 @@ from setuptools import Extension, setup
 ext = Extension(
     name='ottosim.ottosim',
     sources=[
-        'ottosim.cpp',
+        'ottosim/ottosim.cpp',
         'bullet/btBulletAll.cpp',
     ],
     define_macros=[
