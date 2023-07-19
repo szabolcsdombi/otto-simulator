@@ -64,6 +64,18 @@ static PyTypeObject * OttoEnv_type;
 const double pi = 3.1415926535;
 const double dt = 1.0 / 300.0;
 
+double clamped(double target, btMultiBodyJointLimitConstraint * limit) {
+    double low = limit->getLowerBound();
+    double high = limit->getUpperBound();
+    if (target < low) {
+        return low;
+    }
+    if (target > high) {
+        return high;
+    }
+    return target;
+}
+
 btBoxShape * box(double x, double y, double z) {
     btBoxShape * shape = new btBoxShape({x * 0.5, y * 0.5, z * 0.5});
     shape->setMargin(0.0001);
@@ -300,11 +312,12 @@ static PyObject * OttoEnv_meth_step(OttoEnv * self, PyObject * args, PyObject * 
         PyErr_Format(PyExc_ValueError, "invalid action");
         return NULL;
     }
-    double action[4] = {};
-    action[0] = PyFloat_AsDouble(PySequence_Fast_GET_ITEM(seq, 0));
-    action[1] = PyFloat_AsDouble(PySequence_Fast_GET_ITEM(seq, 1));
-    action[2] = PyFloat_AsDouble(PySequence_Fast_GET_ITEM(seq, 2));
-    action[3] = PyFloat_AsDouble(PySequence_Fast_GET_ITEM(seq, 3));
+    double action[4] = {
+        clamped(PyFloat_AsDouble(PySequence_Fast_GET_ITEM(seq, 0)), self->leg_L_limit),
+        clamped(PyFloat_AsDouble(PySequence_Fast_GET_ITEM(seq, 1)), self->foot_L_limit),
+        clamped(PyFloat_AsDouble(PySequence_Fast_GET_ITEM(seq, 2)), self->leg_R_limit),
+        clamped(PyFloat_AsDouble(PySequence_Fast_GET_ITEM(seq, 3)), self->foot_R_limit),
+    };
     if (PyErr_Occurred()) {
         PyErr_Format(PyExc_ValueError, "invalid action");
         return NULL;
