@@ -14,9 +14,11 @@ RUN wget -q https://cdn.jsdelivr.net/pyodide/v0.23.4/full/numpy-1.24.2-cp311-cp3
 RUN git clone https://github.com/szabolcsdombi/zengl -b 1.13.0 /zengl
 RUN pyodide build /zengl -o /web/
 
+FROM base AS canvas
 COPY modules/canvas /canvas
 RUN pyodide build /canvas -o /web/
 
+FROM base AS ottosim
 COPY modules/ottosim /ottosim
 RUN pyodide build /ottosim -o /web/ --exports pyinit
 
@@ -31,5 +33,7 @@ RUN npx webpack
 
 FROM nginx:1.25.1
 COPY --from=base /web /web
+COPY --from=canvas /web/canvas-0.1.0-cp311-cp311-emscripten_3_1_32_wasm32.whl /web/
+COPY --from=ottosim /web/ottosim-0.1.0-cp311-cp311-emscripten_3_1_32_wasm32.whl /web/
 COPY --from=build /app/dist /web
 COPY nginx.conf /etc/nginx/nginx.conf
