@@ -1,6 +1,12 @@
 #include <Python.h>
 #include <structmember.h>
 
+typedef struct Gamepad {
+    float lx, ly;
+    float rx, ry;
+    int reset;
+} Gamepad;
+
 typedef signed long int GLintptr;
 typedef signed long int GLsizeiptr;
 typedef unsigned int GLenum;
@@ -15,6 +21,7 @@ typedef unsigned char GLubyte;
 typedef char GLchar;
 typedef void * GLsync;
 
+extern void canvas_get_gamepad(void * gamepad);
 extern void canvas_get_size(int * size);
 extern float canvas_get_aspect();
 extern void zengl_glCullFace(GLenum mode);
@@ -629,8 +636,10 @@ static PyObject * load_opengl_function(PyObject * self, PyObject * arg) {
     return res;
 }
 
-static PyObject * Canvas_meth_controller(Canvas * self, PyObject * args) {
-    Py_RETURN_NONE;
+static PyObject * Canvas_meth_gamepad(Canvas * self, PyObject * args) {
+    Gamepad gamepad = {};
+    canvas_get_gamepad(&gamepad);
+    return Py_BuildValue("{s(ff)s(ff)sO}", "left", gamepad.lx, gamepad.ly, "right", gamepad.rx, gamepad.ry, "reset", gamepad.reset ? Py_True : Py_False);
 }
 
 static PyObject * Canvas_get_size(Canvas * self, void * closure) {
@@ -659,7 +668,7 @@ static PyType_Slot Loader_slots[] = {
 };
 
 static PyMethodDef Canvas_methods[] = {
-    {"controller", (PyCFunction)Canvas_meth_controller, METH_NOARGS},
+    {"gamepad", (PyCFunction)Canvas_meth_gamepad, METH_NOARGS},
     {NULL},
 };
 

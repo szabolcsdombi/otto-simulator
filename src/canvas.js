@@ -44,6 +44,26 @@ export const setupCanvas = (pyodide, canvas, gl) => {
   glo[0] = null;
 
   wasm.mergeLibSymbols({
+    canvas_get_gamepad(raw) {
+      const gamepads = navigator.getGamepads();
+      if (!gamepads) {
+        return;
+      }
+      wasm.HEAPF32[raw / 4] = 0.0;
+      wasm.HEAPF32[raw / 4 + 1] = 0.0;
+      wasm.HEAPF32[raw / 4 + 2] = 0.0;
+      wasm.HEAPF32[raw / 4 + 3] = 0.0;
+      for (const gamepad of gamepads) {
+        if (gamepad) {
+          wasm.HEAPF32[raw / 4] = gamepad.axes[0];
+          wasm.HEAPF32[raw / 4 + 1] = gamepad.axes[1];
+          wasm.HEAPF32[raw / 4 + 2] = gamepad.axes[2];
+          wasm.HEAPF32[raw / 4 + 3] = gamepad.axes[3];
+          wasm.HEAP32[raw / 4 + 4] = gamepad.buttons[0].touched;
+          break;
+        }
+      }
+    },
     canvas_get_size(size) {
       wasm.HEAP32[size / 4] = canvas.width;
       wasm.HEAP32[size / 4 + 1] = canvas.height;
