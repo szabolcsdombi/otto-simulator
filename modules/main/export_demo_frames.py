@@ -3,7 +3,7 @@ import ottosim
 
 f = open('otto.frames.bin', 'wb')
 
-env = ottosim.make()
+env = ottosim.make('OttoLowFriction-v0')
 env.reset()
 t = 0.0
 for i in range(180):

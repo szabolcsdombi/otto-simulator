@@ -17,7 +17,7 @@ animations = cycle([
 
 
 class g:
-    env = ottosim.make('Otto-v0')
+    env = ottosim.make('OttoLowFriction-v0')
     animation = None
     t = None
 
@@ -33,9 +33,7 @@ def render():
         action = g.animation(g.t)
         g.env.step(action)
 
-    renderer.init((0.0, -0.3, 0.15), (0.0, 0.0, 0.07))
-    renderer.render(g.env)
-    renderer.flush()
+    renderer.render(g.env, (0.0, -0.3, 0.15), (0.0, 0.0, 0.07))
 
 
 window.on_frame = render
