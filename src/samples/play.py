@@ -24,12 +24,12 @@ def balance(t, b):
     return [0.0, -0.8 * b + math.sin(t * 4.2) * 0.2 * b, 0.0, 0.8 * b + math.sin(t * 4.2) * 0.2 * b]
 
 
-def turn_right(t, b):
-    return [0.0, 0.0, math.sin(t * math.pi * 3.0) * 0.5 * b, math.cos(t * math.pi * 3.0) * 0.25 * b]
-
-
 def turn_left(t, b):
     return [math.sin(t * math.pi * 3.0) * 0.5 * b, math.cos(t * math.pi * 3.0) * 0.25 * b, 0.0, 0.0]
+
+
+def turn_right(t, b):
+    return [0.0, 0.0, math.sin(t * math.pi * 3.0) * 0.5 * b, math.cos(t * math.pi * 3.0) * 0.25 * b]
 
 
 def walk(t, b):
@@ -82,8 +82,8 @@ def update():
         blend(new_action, jump(g.t, g.blending[0]))
         blend(new_action, dance(g.t, g.blending[1]))
         blend(new_action, balance(g.t, g.blending[2]))
-        blend(new_action, turn_right(g.t, g.blending[3]))
-        blend(new_action, turn_left(g.t, g.blending[4]))
+        blend(new_action, turn_left(g.t, g.blending[3]))
+        blend(new_action, turn_right(g.t, g.blending[4]))
         blend(new_action, walk(g.t, g.blending[5]))
         if total > 1.0:
             new_action[0] /= total
