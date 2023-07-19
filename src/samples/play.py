@@ -19,7 +19,7 @@ def balance(t):
 
 
 ctx = zengl.context(canvas.Loader())
-renderer = ottosim.Renderer(ctx, (1280, 720))
+renderer = ottosim.Renderer(ctx, canvas.window.size)
 
 env = ottosim.make('Otto-v0')
 
@@ -32,4 +32,4 @@ def update():
         action = balance(g.t)
         env.step(action)
 
-    renderer.render(env, (0.0, -0.3, 0.15), (0.0, 0.0, 0.07))
+    renderer.render(env, (0.0, -0.3, 0.15), (0.0, 0.0, 0.07), canvas.window.aspect)

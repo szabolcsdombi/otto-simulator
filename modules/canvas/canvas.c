@@ -15,6 +15,8 @@ typedef unsigned char GLubyte;
 typedef char GLchar;
 typedef void * GLsync;
 
+extern void canvas_get_size(int * size);
+extern float canvas_get_aspect();
 extern void zengl_glCullFace(GLenum mode);
 extern void zengl_glClear(GLbitfield mask);
 extern void zengl_glTexParameteri(GLenum target, GLenum pname, GLint param);
@@ -601,10 +603,15 @@ void impl_glVertexAttribDivisor(GLuint index, GLuint divisor) {
     zengl_glVertexAttribDivisor(index, divisor);
 }
 
+typedef struct Canvas {
+    PyObject_HEAD
+} Canvas;
+
 typedef struct Loader {
     PyObject_HEAD
 } Loader;
 
+static PyTypeObject * Canvas_type;
 static PyTypeObject * Loader_type;
 
 PyObject * lookup;
@@ -622,6 +629,20 @@ static PyObject * load_opengl_function(PyObject * self, PyObject * arg) {
     return res;
 }
 
+static PyObject * Canvas_meth_controller(Canvas * self, PyObject * args) {
+    Py_RETURN_NONE;
+}
+
+static PyObject * Canvas_get_size(Canvas * self, void * closure) {
+    int size[2];
+    canvas_get_size(size);
+    return Py_BuildValue("(ii)", size[0], size[1]);
+}
+
+static PyObject * Canvas_get_aspect(Canvas * self, void * closure) {
+    return PyFloat_FromDouble(canvas_get_aspect());
+}
+
 static void default_dealloc(PyObject * self) {
     Py_TYPE(self)->tp_free(self);
 }
@@ -637,6 +658,25 @@ static PyType_Slot Loader_slots[] = {
     {0},
 };
 
+static PyMethodDef Canvas_methods[] = {
+    {"controller", (PyCFunction)Canvas_meth_controller, METH_NOARGS},
+    {NULL},
+};
+
+static PyGetSetDef Canvas_getset[] = {
+    {"size", (getter)Canvas_get_size, NULL},
+    {"aspect", (getter)Canvas_get_aspect, NULL},
+    {NULL},
+};
+
+static PyType_Slot Canvas_slots[] = {
+    {Py_tp_methods, Canvas_methods},
+    {Py_tp_getset, Canvas_getset},
+    {Py_tp_dealloc, default_dealloc},
+    {0},
+};
+
+static PyType_Spec Canvas_spec = {"canvas.Canvas", sizeof(Canvas), 0, Py_TPFLAGS_DEFAULT, Canvas_slots};
 static PyType_Spec Loader_spec = {"canvas.Loader", sizeof(Loader), 0, Py_TPFLAGS_DEFAULT, Loader_slots};
 
 static PyMethodDef module_methods[] = {
@@ -647,6 +687,10 @@ static PyModuleDef module_def = {PyModuleDef_HEAD_INIT, "canvas", NULL, -1, modu
 
 extern PyObject * PyInit_canvas() {
     PyObject * module = PyModule_Create(&module_def);
+
+    Canvas_type = (PyTypeObject *)PyType_FromSpec(&Canvas_spec);
+    PyModule_AddObject(module, "Canvas", (PyObject *)Canvas_type);
+    PyModule_AddObject(module, "window", PyObject_New(PyObject, Canvas_type));
 
     Loader_type = (PyTypeObject *)PyType_FromSpec(&Loader_spec);
     PyModule_AddObject(module, "Loader", (PyObject *)Loader_type);

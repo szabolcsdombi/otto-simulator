@@ -44,6 +44,14 @@ export const setupCanvas = (pyodide, canvas, gl) => {
   glo[0] = null;
 
   wasm.mergeLibSymbols({
+    canvas_get_size(size) {
+      wasm.HEAP32[size / 4] = canvas.width;
+      wasm.HEAP32[size / 4 + 1] = canvas.height;
+    },
+    canvas_get_aspect() {
+      const rect = canvas.getBoundingClientRect();
+      return rect.width / rect.height;
+    },
     zengl_glCullFace(mode) {
       gl.cullFace(mode);
     },

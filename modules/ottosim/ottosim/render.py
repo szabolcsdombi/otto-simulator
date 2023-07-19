@@ -84,7 +84,6 @@ def make_pipeline(ctx, framebuffer, uniform_buffer, vertex_buffer, bones, bone, 
 class Renderer:
     def __init__(self, ctx: zengl.Context, size):
         self.ctx = ctx
-        self.aspect = size[0] / size[1]
         self.resolved = ctx.image(size, 'rgba8unorm', texture=False)
         self.image = ctx.image(size, 'rgba8unorm', samples=16)
         self.depth = ctx.image(size, 'depth24plus', samples=16)
@@ -103,9 +102,11 @@ class Renderer:
             make_pipeline(self.ctx, framebuffer, self.uniform_buffer, self.vertex_buffer, self.bones, 5, 1806, 1248),
         ]
 
-    def render(self, env, eye, target):
+    def render(self, env, eye, target, aspect=None):
+        if aspect is None:
+            aspect = self.resolved.size[0] / self.resolved.size[1]
         self.ctx.new_frame()
-        camera = zengl.camera(eye, target, aspect=self.aspect, fov=45.0)
+        camera = zengl.camera(eye, target, aspect=aspect, fov=45.0)
         self.uniform_buffer.write(camera)
         self.image.clear()
         self.depth.clear()
