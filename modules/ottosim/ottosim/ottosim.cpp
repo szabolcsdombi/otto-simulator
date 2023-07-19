@@ -32,6 +32,10 @@ struct OttoEnv {
     int ready;
     double time;
 
+    struct {
+        bool low_friction;
+    } settings;
+
     btMultiBodyDynamicsWorld * world;
     btRigidBody * ground;
     btMultiBody * robot;
@@ -178,17 +182,23 @@ void OttoEnv_init(OttoEnv * self, unsigned long long seed) {
     self->leg_R_motor->finalizeMultiDof();
     self->foot_R_motor->finalizeMultiDof();
 
-    self->ground->setFriction(0.1);
+    self->ground->setFriction(0.75);
     self->ground->setRollingFriction(0.01);
     self->ground->setSpinningFriction(0.01);
 
-    self->foot_L->setFriction(0.1);
+    self->foot_L->setFriction(0.75);
     self->foot_L->setRollingFriction(0.01);
     self->foot_L->setSpinningFriction(0.01);
 
-    self->foot_R->setFriction(0.1);
+    self->foot_R->setFriction(0.75);
     self->foot_R->setRollingFriction(0.01);
     self->foot_R->setSpinningFriction(0.01);
+
+    if (self->settings.low_friction) {
+        self->ground->setFriction(0.1);
+        self->foot_L->setFriction(0.1);
+        self->foot_R->setFriction(0.1);
+    }
 
     for (int i = 0; i < 10; ++i) {
         self->leg_L_motor->setPositionTarget(0.0);
@@ -207,10 +217,34 @@ void OttoEnv_release(OttoEnv * self) {
     self->ready = false;
 }
 
-static OttoEnv * meth_make(PyObject * self, PyObject * args, PyObject * kwargs) {
+static OttoEnv * OttoEnv_new() {
     OttoEnv * res = PyObject_New(OttoEnv, OttoEnv_type);
+    res->settings = {};
     res->ready = false;
     return res;
+}
+
+static OttoEnv * meth_make(PyObject * self, PyObject * args, PyObject * kwargs) {
+    const char * keywords[] = {"id", NULL};
+
+    const char * id;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "s", (char **)keywords, &id)) {
+        return NULL;
+    }
+
+    if (!strcmp(id, "Otto-v0")) {
+        return OttoEnv_new();
+    }
+
+    if (!strcmp(id, "OttoLowFriction-v0")) {
+        OttoEnv * env = OttoEnv_new();
+        env->settings.low_friction = true;
+        return env;
+    }
+
+    PyErr_Format(PyExc_ValueError, "env not found");
+    return NULL;
 }
 
 static PyObject * OttoEnv_observation(OttoEnv * self) {
