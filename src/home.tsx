@@ -17,6 +17,8 @@ export const Home = () => {
       <div
         style={{
           width: 'min(800px, 100%)',
+          boxSizing: 'border-box',
+          padding: '0 20px',
           margin: 'auto',
         }}
       >
