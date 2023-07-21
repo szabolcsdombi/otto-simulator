@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import ReactDOM from 'react-dom/client';
 import CodeEditor from '@uiw/react-textarea-code-editor';
 import { loadPyodide } from 'pyodide';
 import { setupCanvas } from './canvas';
@@ -145,3 +146,11 @@ export const Editor = () => {
     </div>
   );
 };
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+
+root.render((
+  <React.StrictMode>
+    <Editor />
+  </React.StrictMode>
+));

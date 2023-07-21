@@ -8,10 +8,12 @@ __pycache__
 *.pyd
 *.so
 
-dist/*
-!dist/index.html
-!dist/favicon.svg
-!dist/otto.*.bin
+dist/*.js
+dist/*.txt
+dist/*.whl
+dist/*.zip
+dist/*.json
+dist/*.wasm
 
 *.blend*
 *.log

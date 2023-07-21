@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import ReactDOM from 'react-dom/client';
 import { loadPyodide } from 'pyodide';
 import { setupCanvas } from './canvas';
 import pythonCode from './samples/play.py';
@@ -97,3 +98,11 @@ export const Play = () => {
     </div>
   );
 };
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+
+root.render((
+  <React.StrictMode>
+    <Play />
+  </React.StrictMode>
+));

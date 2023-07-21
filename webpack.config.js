@@ -1,7 +1,11 @@
 const path = require('path');
 
 module.exports = {
-  entry: './src/index.tsx',
+  entry: {
+    home: './src/home.tsx',
+    editor: './src/editor.tsx',
+    play: './src/play.tsx',
+  },
   mode: 'production', // 'development',
   devtool: false, // 'source-map',
   module: {
@@ -26,7 +30,7 @@ module.exports = {
     extensions: ['.tsx', '.ts', '.js'],
   },
   output: {
-    filename: 'index.js',
+    filename: '[name].js',
     path: path.resolve(__dirname, 'dist'),
   },
 };
