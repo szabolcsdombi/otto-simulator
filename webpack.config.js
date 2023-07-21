@@ -20,6 +20,10 @@ module.exports = {
         use: ['style-loader', 'css-loader'],
       },
       {
+        test: /\.bin$/,
+        use: ['binary-base64-loader'],
+      },
+      {
         test: /\.py$/,
         type: 'asset/source',
       },

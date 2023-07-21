@@ -1,5 +1,16 @@
 import React, { useEffect } from 'react';
 import { useRef } from 'react';
+import ottoFrames from './assets/otto.frames.bin';
+import ottoMesh from './assets/otto.mesh.bin';
+
+const base64ToArrayBuffer = (base64) => {
+  const binaryString = atob(base64);
+  const bytes = new Uint8Array(binaryString.length);
+  for (let i = 0; i < binaryString.length; i++) {
+    bytes[i] = binaryString.charCodeAt(i);
+  }
+  return bytes.buffer;
+}
 
 const vec = (x, y, z) => ({ x, y, z });
 const sub = (a, b) => ({ x: a.x - b.x, y: a.y - b.y, z: a.z - b.z });
@@ -94,22 +105,11 @@ export const Demo = () => {
   useEffect(() => {
     let anim = null;
 
-    const download = async (url) => {
-      const res = await fetch(url);
-      const data = await res.arrayBuffer();
-      return data;
-    };
-
-    const downloadResources = async () => {
-      const [mesh, frames] = await Promise.all([
-        download('otto.mesh.bin'),
-        download('otto.frames.bin'),
-      ]);
-      return { mesh, frames: new Float32Array(frames) };
-    };
-
     const init = async () => {
-      const resources = await downloadResources();
+      const resources = {
+        mesh: base64ToArrayBuffer(ottoMesh),
+        frames: new Float32Array(base64ToArrayBuffer(ottoFrames)),
+      };
 
       const gl = ref.current.getContext('webgl2') as WebGL2RenderingContext;
 
