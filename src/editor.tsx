@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import CodeEditor from '@uiw/react-textarea-code-editor';
 import { loadPyodide } from 'pyodide';
 import { setupCanvas } from './canvas';
 import pythonCode from './samples/editor.py';
@@ -89,14 +90,18 @@ export const Editor = () => {
           display: 'flex',
         }}
       >
-        <textarea
+        <CodeEditor
+          language="py"
           value={code}
           onChange={(evt) => setCode(evt.target.value)}
+          padding={15}
           style={{
             width: '50%',
             height: '100%',
             resize: 'none',
             border: 'none',
+            fontFamily: 'Inconsolata,monospace',
+            fontSize: 12,
           }}
         />
         <canvas
